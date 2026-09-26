@@ -30,7 +30,7 @@ jobs:
         run: npm ci
       - name: Build
         env:
-          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
         run: npm run build
       - name: Upload to InfinityFree
         uses: SamKirkland/FTP-Deploy-Action@v4.3.6
