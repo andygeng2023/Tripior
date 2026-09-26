@@ -1,0 +1,14 @@
+import Fastify from "fastify";
+import cors from "@fastify/cors";
+import helmet from "@fastify/helmet";
+import {z} from "zod";
+import {q} from "./db.js";
+import {runResearch} from "./research.js";
+const app=Fastify({logger:true}); await app.register(helmet);
+await app.register(cors,{origin:process.env.CORS_ORIGIN?.split(",")??true});
+const schema=z.object({destination:z.string().min(2),travelStart:z.string().optional(),travelEnd:z.string().optional(),travellerCount:z.number().int().min(1).max(100).default(1),interests:z.array(z.string()).optional(),preferredCategories:z.array(z.string()).optional(),excludedCategories:z.array(z.string()).optional(),mustVisits:z.array(z.string()).optional(),maxGeographicRangeKm:z.number().positive().optional(),maxDailyTravelMinutes:z.number().int().positive().optional(),maxDailyActivityMinutes:z.number().int().positive().optional(),transportPreferences:z.array(z.string()).optional(),accessibilityRequirements:z.array(z.string()).optional(),budget:z.record(z.unknown()).optional(),otherConstraints:z.record(z.unknown()).optional()});
+app.get("/health",async()=>({ok:true,service:"tripior-research-engine",version:"0.1.0"}));
+app.post("/api/research/runs",async(req,reply)=>{const p=schema.safeParse(req.body);if(!p.success)return reply.code(400).send({error:"Invalid research profile",details:p.error.flatten()});try{return reply.code(201).send(await runResearch(p.data))}catch(e){return reply.code(502).send({error:e instanceof Error?e.message:"Research failed"})}});
+app.get("/api/research/runs/:id",async(req,reply)=>{const rows=await q("select * from research_runs where id=$1",[(req.params as any).id]);return rows[0]??reply.code(404).send({error:"Run not found"})});
+app.get("/api/research/snapshots/:id/places",async(req)=>q("select p.*,s.universal_score as snapshot_universal_score,s.confidence as snapshot_confidence from research_snapshot_places s join places p on p.id=s.place_id where s.snapshot_id=$1 order by s.universal_score desc nulls last",[(req.params as any).id]));
+app.listen({port:Number(process.env.PORT??8080),host:"0.0.0.0"}).catch(e=>{app.log.error(e);process.exit(1)});
