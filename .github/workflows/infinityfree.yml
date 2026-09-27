@@ -20,18 +20,21 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
+
       - name: Install
         run: npm install
+
       - name: Build
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
         run: npm run build
+
       - name: Upload to InfinityFree
         uses: SamKirkland/FTP-Deploy-Action@v4.3.6
         with:
@@ -40,5 +43,5 @@ jobs:
           password: ${{ secrets.INFINITYFREE_FTP_PASSWORD }}
           protocol: ftps
           local-dir: web/dist/
-          server-dir: ${{ secrets.INFINITYFREE_FTP_SERVER_DIR }}
+          server-dir: /htdocs/
           dangerous-clean-slate: false
