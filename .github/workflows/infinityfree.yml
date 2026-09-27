@@ -43,5 +43,5 @@ jobs:
           password: ${{ secrets.INFINITYFREE_FTP_PASSWORD }}
           protocol: ftps
           local-dir: web/dist/
-          server-dir: /htdocs/
+          server-dir: /tripior.infinityfree.io/htdocs/
           dangerous-clean-slate: false
