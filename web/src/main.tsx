@@ -2,7 +2,7 @@ import React,{useState}from"react";
 import{createRoot}from"react-dom/client";
 import{Search,MapPin,CalendarDays,Users,Clock3,ArrowRight,CheckCircle2,Database,Route,SlidersHorizontal}from"lucide-react";
 import"./styles.css";
-const SUPABASE_URL=(import.meta.env.VITE_SUPABASE_URL??"").replace(/\\/$/,"");
+const SUPABASE_URL=(import.meta.env.VITE_SUPABASE_URL??"").replace(/\/$/,"");
 const SUPABASE_KEY=import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY??"";
 const API=SUPABASE_URL+"/functions/v1/research";
 const headers={"content-type":"application/json","apikey":SUPABASE_KEY};
