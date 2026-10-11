@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tripior Planner</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Tripior</p>
+          <h1>Build a full road trip plan you can actually edit.</h1>
+          <p class="hero-text">
+            Pick the place, list your must-visits and do-not-visits, set trip
+            length, daily driving max, hotel style, budget, and pace. Tripior
+            turns it into a detailed day-by-day trip that stays changeable.
+          </p>
+          <div class="hero-actions">
+            <button class="primary-button" id="plan-now" type="button">
+              Plan My Trip
+            </button>
+            <button class="secondary-button" id="load-demo" type="button">
+              Load Demo Trip
+            </button>
+          </div>
+        </div>
+        <div class="hero-panel">
+          <div class="stat-card">
+            <span class="stat-label">Plans</span>
+            <strong id="days-count">0 days</strong>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Stops</span>
+            <strong id="stops-count">0 highlights</strong>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Driving</span>
+            <strong id="drive-count">0 mi / day</strong>
+          </div>
+        </div>
+      </header>
+
+      <main class="layout">
+        <section class="panel planner-panel">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">Planner Inputs</p>
+              <h2>Trip preferences</h2>
+            </div>
+            <button class="ghost-button" id="reset-form" type="button">
+              Reset
+            </button>
+          </div>
+
+          <form id="planner-form">
+            <div class="grid two-col">
+              <label>
+                <span>Destination / Region</span>
+                <input
+                  id="destination"
+                  name="destination"
+                  type="text"
+                  placeholder="California Coast"
+                  required
+                />
+              </label>
+              <label>
+                <span>Starting point</span>
+                <input
+                  id="startPoint"
+                  name="startPoint"
+                  type="text"
+                  placeholder="San Francisco"
+                />
+              </label>
+            </div>
+
+            <div class="grid three-col">
+              <label>
+                <span>Trip length</span>
+                <input
+                  id="tripLength"
+                  name="tripLength"
+                  type="number"
+                  min="2"
+                  max="21"
+                  value="7"
+                  required
+                />
+              </label>
+              <label>
+                <span>Travelers</span>
+                <input
+                  id="travelers"
+                  name="travelers"
+                  type="text"
+                  placeholder="2 adults"
+                />
+              </label>
+              <label>
+                <span>Max daily driving (miles)</span>
+                <input
+                  id="maxDrive"
+                  name="maxDrive"
+                  type="number"
+                  min="25"
+                  max="600"
+                  value="180"
+                  required
+                />
+              </label>
+            </div>
+
+            <div class="grid three-col">
+              <label>
+                <span>Trip pace</span>
+                <select id="pace" name="pace">
+                  <option value="easy">Easy</option>
+                  <option value="balanced" selected>Balanced</option>
+                  <option value="packed">Packed</option>
+                </select>
+              </label>
+              <label>
+                <span>Budget style</span>
+                <select id="budget" name="budget">
+                  <option value="value">Value</option>
+                  <option value="midrange" selected>Mid-range</option>
+                  <option value="premium">Premium</option>
+                </select>
+              </label>
+              <label>
+                <span>Hotel preference</span>
+                <select id="hotelStyle" name="hotelStyle">
+                  <option value="boutique" selected>Boutique</option>
+                  <option value="chain">Reliable chain</option>
+                  <option value="luxury">Luxury</option>
+                  <option value="local">Local stay</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="grid two-col">
+              <label>
+                <span>Must-visits</span>
+                <textarea
+                  id="mustVisits"
+                  name="mustVisits"
+                  rows="5"
+                  placeholder="Big Sur&#10;Monterey Bay Aquarium&#10;Santa Barbara"
+                ></textarea>
+              </label>
+              <label>
+                <span>Do-not-visits / Avoid</span>
+                <textarea
+                  id="avoidPlaces"
+                  name="avoidPlaces"
+                  rows="5"
+                  placeholder="Crowded nightlife districts&#10;Theme parks"
+                ></textarea>
+              </label>
+            </div>
+
+            <label>
+              <span>Extra notes</span>
+              <textarea
+                id="notes"
+                name="notes"
+                rows="4"
+                placeholder="Ocean views, seafood, scenic walks, and relaxed mornings."
+              ></textarea>
+            </label>
+
+            <div class="form-actions">
+              <button class="primary-button" type="submit">
+                Generate Full Plan
+              </button>
+              <button class="secondary-button" id="save-draft" type="button">
+                Save Draft
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <section class="panel itinerary-panel">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">Generated Itinerary</p>
+              <h2>Your editable trip plan</h2>
+            </div>
+            <div class="panel-actions">
+              <button class="ghost-button" id="regenerate-plan" type="button">
+                Regenerate
+              </button>
+              <button class="ghost-button" id="copy-plan" type="button">
+                Copy Plan
+              </button>
+            </div>
+          </div>
+
+          <div id="summary" class="summary-card empty-state">
+            Fill out the trip details and generate a plan to see your trip
+            summary, routing logic, hotel picks, and daily schedule.
+          </div>
+
+          <div id="itinerary" class="itinerary-list"></div>
+        </section>
+      </main>
+    </div>
+
+    <template id="day-card-template">
+      <article class="day-card">
+        <div class="day-card-top">
+          <div>
+            <p class="day-label"></p>
+            <input class="day-title" type="text" />
+          </div>
+          <div class="day-metrics"></div>
+        </div>
+
+        <div class="day-grid">
+          <label>
+            <span>Morning</span>
+            <textarea class="day-morning" rows="4"></textarea>
+          </label>
+          <label>
+            <span>Afternoon</span>
+            <textarea class="day-afternoon" rows="4"></textarea>
+          </label>
+          <label>
+            <span>Evening</span>
+            <textarea class="day-evening" rows="4"></textarea>
+          </label>
+          <label>
+            <span>Stay / Hotel</span>
+            <textarea class="day-hotel" rows="3"></textarea>
+          </label>
+          <label>
+            <span>Food / Reservations</span>
+            <textarea class="day-food" rows="3"></textarea>
+          </label>
+          <label>
+            <span>Logistics / Notes</span>
+            <textarea class="day-notes" rows="3"></textarea>
+          </label>
+        </div>
+
+        <div class="day-actions">
+          <button class="ghost-button move-up" type="button">Move Up</button>
+          <button class="ghost-button move-down" type="button">
+            Move Down
+          </button>
+          <button class="ghost-button regenerate-day" type="button">
+            Refresh Day
+          </button>
+        </div>
+      </article>
+    </template>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
