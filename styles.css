@@ -9,6 +9,7 @@
   --accent-strong: #2b7fff;
   --accent-soft: rgba(112, 167, 255, 0.12);
   --success: #4cd99a;
+  --warning: #ffce72;
   --shadow: 0 18px 55px rgba(0, 0, 0, 0.3);
 }
 
@@ -43,6 +44,10 @@ select {
   margin: 0 auto;
 }
 
+.hidden {
+  display: none !important;
+}
+
 .hero {
   display: grid;
   grid-template-columns: 2.2fr 1fr;
@@ -62,6 +67,15 @@ select {
 
 .hero-copy {
   padding: 28px;
+}
+
+.top-row,
+.status-row,
+.sub-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 .eyebrow,
@@ -86,6 +100,19 @@ select {
   color: var(--muted);
   font-size: 1.04rem;
   line-height: 1.65;
+}
+
+.status-pill,
+.helper-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 0.84rem;
+  background: rgba(255, 255, 255, 0.06);
+  color: #dce9ff;
+  border: 1px solid rgba(151, 180, 226, 0.16);
 }
 
 .hero-actions,
@@ -121,8 +148,47 @@ select {
   gap: 24px;
 }
 
+.right-column {
+  display: grid;
+  gap: 24px;
+}
+
 .panel {
   padding: 22px;
+}
+
+.sub-panel {
+  margin-bottom: 18px;
+  padding: 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(151, 180, 226, 0.12);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.sub-panel h3 {
+  margin: 0;
+  font-size: 1.04rem;
+}
+
+.compact-grid {
+  margin-bottom: 8px;
+}
+
+.stack-end {
+  display: grid;
+  gap: 10px;
+  align-content: end;
+}
+
+.helper-text {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.full-width {
+  width: 100%;
 }
 
 .section-heading {
@@ -221,6 +287,10 @@ textarea {
   border-color: rgba(151, 180, 226, 0.18);
 }
 
+.link-button {
+  text-decoration: none;
+}
+
 .summary-card {
   min-height: 112px;
   margin-bottom: 18px;
@@ -267,6 +337,69 @@ textarea {
 .itinerary-list {
   display: grid;
   gap: 16px;
+}
+
+.map-canvas {
+  height: 360px;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 22px;
+  border: 1px solid rgba(151, 180, 226, 0.12);
+  background:
+    linear-gradient(145deg, rgba(43, 127, 255, 0.16), rgba(27, 39, 73, 0.8)),
+    radial-gradient(circle at center, rgba(112, 167, 255, 0.18), transparent 60%);
+}
+
+.empty-map {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  color: var(--muted);
+  padding: 24px;
+}
+
+.route-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin: 16px 0 18px;
+}
+
+.route-card {
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(151, 180, 226, 0.1);
+}
+
+.route-label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.hotel-list {
+  display: grid;
+  gap: 12px;
+}
+
+.hotel-item {
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(151, 180, 226, 0.1);
+}
+
+.hotel-item h4 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+
+.hotel-item p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
 }
 
 .day-card {
@@ -348,16 +481,24 @@ textarea {
 
   .two-col,
   .three-col,
+  .route-grid,
   .day-grid {
     grid-template-columns: 1fr;
   }
 
   .day-card-top,
-  .section-heading {
+  .section-heading,
+  .sub-panel-head,
+  .top-row {
     flex-direction: column;
   }
 
   .day-metrics {
     justify-content: flex-start;
+  }
+
+  .status-row {
+    width: 100%;
+    flex-wrap: wrap;
   }
 }

@@ -3,7 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0c1730" />
+    <meta
+      name="description"
+      content="Tripior is a map-connected road trip planner with editable itineraries, route insights, and installable offline support."
+    />
     <title>Tripior Planner</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./icons/icon-any.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icons/icon-maskable.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -16,12 +24,19 @@
     <div class="shell">
       <header class="hero">
         <div class="hero-copy">
-          <p class="eyebrow">Tripior</p>
-          <h1>Build a full road trip plan you can actually edit.</h1>
+          <div class="top-row">
+            <p class="eyebrow">Tripior</p>
+            <div class="status-row">
+              <span class="status-pill" id="network-status">Online</span>
+              <span class="status-pill" id="maps-status-pill">Maps setup needed</span>
+            </div>
+          </div>
+          <h1>Plan a real trip with Google Maps, route logic, and installable offline access.</h1>
           <p class="hero-text">
-            Pick the place, list your must-visits and do-not-visits, set trip
-            length, daily driving max, hotel style, budget, and pace. Tripior
-            turns it into a detailed day-by-day trip that stays changeable.
+            Build a full trip from destination, must-visits, avoid lists, trip
+            length, hotel style, pace, and daily driving limits. Tripior now
+            adds route-aware planning, live place lookup, hotel suggestions,
+            and PWA install support.
           </p>
           <div class="hero-actions">
             <button class="primary-button" id="plan-now" type="button">
@@ -29,6 +44,9 @@
             </button>
             <button class="secondary-button" id="load-demo" type="button">
               Load Demo Trip
+            </button>
+            <button class="secondary-button hidden" id="install-app" type="button">
+              Install App
             </button>
           </div>
         </div>
@@ -45,6 +63,10 @@
             <span class="stat-label">Driving</span>
             <strong id="drive-count">0 mi / day</strong>
           </div>
+          <div class="stat-card">
+            <span class="stat-label">Route</span>
+            <strong id="route-total">No route yet</strong>
+          </div>
         </div>
       </header>
 
@@ -58,6 +80,39 @@
             <button class="ghost-button" id="reset-form" type="button">
               Reset
             </button>
+          </div>
+
+          <div class="sub-panel">
+            <div class="sub-panel-head">
+              <div>
+                <p class="section-kicker">Google Maps</p>
+                <h3>Connect your API key</h3>
+              </div>
+              <span class="helper-text">Stored locally in your browser</span>
+            </div>
+            <div class="grid two-col compact-grid">
+              <label>
+                <span>Google Maps API key</span>
+                <input
+                  id="mapsApiKey"
+                  type="password"
+                  placeholder="AIza..."
+                  autocomplete="off"
+                />
+              </label>
+              <div class="stack-end">
+                <button class="secondary-button full-width" id="save-maps-key" type="button">
+                  Save Key
+                </button>
+                <button class="ghost-button full-width" id="clear-maps-key" type="button">
+                  Clear Key
+                </button>
+              </div>
+            </div>
+            <p class="helper-text" id="maps-status-text">
+              Add a Google Maps JavaScript API key with Places enabled to unlock autocomplete,
+              route calculations, and hotel suggestions.
+            </p>
           </div>
 
           <form id="planner-form">
@@ -147,13 +202,41 @@
               </label>
             </div>
 
+            <div class="sub-panel">
+              <div class="sub-panel-head">
+                <div>
+                  <p class="section-kicker">Place Search</p>
+                  <h3>Search and add a stop</h3>
+                </div>
+                <span class="helper-text">Uses Google Places when connected</span>
+              </div>
+              <div class="grid two-col compact-grid">
+                <label>
+                  <span>Place search</span>
+                  <input
+                    id="placeSearch"
+                    type="text"
+                    placeholder="Search for a stop or hotel area"
+                  />
+                </label>
+                <div class="stack-end">
+                  <button class="secondary-button full-width" id="add-place-to-must" type="button">
+                    Add To Must-Visits
+                  </button>
+                  <button class="ghost-button full-width" id="focus-place-on-map" type="button">
+                    Focus On Map
+                  </button>
+                </div>
+              </div>
+            </div>
+
             <div class="grid two-col">
               <label>
                 <span>Must-visits</span>
                 <textarea
                   id="mustVisits"
                   name="mustVisits"
-                  rows="5"
+                  rows="6"
                   placeholder="Big Sur&#10;Monterey Bay Aquarium&#10;Santa Barbara"
                 ></textarea>
               </label>
@@ -162,7 +245,7 @@
                 <textarea
                   id="avoidPlaces"
                   name="avoidPlaces"
-                  rows="5"
+                  rows="6"
                   placeholder="Crowded nightlife districts&#10;Theme parks"
                 ></textarea>
               </label>
@@ -189,28 +272,76 @@
           </form>
         </section>
 
-        <section class="panel itinerary-panel">
-          <div class="section-heading">
-            <div>
-              <p class="section-kicker">Generated Itinerary</p>
-              <h2>Your editable trip plan</h2>
+        <section class="right-column">
+          <section class="panel map-panel">
+            <div class="section-heading">
+              <div>
+                <p class="section-kicker">Map + Route</p>
+                <h2>Live trip map</h2>
+              </div>
+              <div class="panel-actions">
+                <a class="ghost-button link-button" id="open-route" href="#" target="_blank" rel="noreferrer">
+                  Open In Google Maps
+                </a>
+              </div>
             </div>
-            <div class="panel-actions">
-              <button class="ghost-button" id="regenerate-plan" type="button">
-                Regenerate
-              </button>
-              <button class="ghost-button" id="copy-plan" type="button">
-                Copy Plan
-              </button>
+
+            <div id="map-canvas" class="map-canvas empty-map">
+              Add a Google Maps API key to turn on the live route map.
             </div>
-          </div>
 
-          <div id="summary" class="summary-card empty-state">
-            Fill out the trip details and generate a plan to see your trip
-            summary, routing logic, hotel picks, and daily schedule.
-          </div>
+            <div class="route-grid">
+              <div class="route-card">
+                <span class="route-label">Total distance</span>
+                <strong id="route-distance">Not calculated</strong>
+              </div>
+              <div class="route-card">
+                <span class="route-label">Driving time</span>
+                <strong id="route-duration">Not calculated</strong>
+              </div>
+              <div class="route-card">
+                <span class="route-label">Mapped stops</span>
+                <strong id="route-stops">0</strong>
+              </div>
+            </div>
 
-          <div id="itinerary" class="itinerary-list"></div>
+            <div class="sub-panel">
+              <div class="sub-panel-head">
+                <div>
+                  <p class="section-kicker">Stay Ideas</p>
+                  <h3>Nearby hotel suggestions</h3>
+                </div>
+                <span class="helper-text">Based on your mapped trip area</span>
+              </div>
+              <div id="hotel-suggestions" class="hotel-list empty-state">
+                Connect Maps and generate a route to see nearby lodging suggestions.
+              </div>
+            </div>
+          </section>
+
+          <section class="panel itinerary-panel">
+            <div class="section-heading">
+              <div>
+                <p class="section-kicker">Generated Itinerary</p>
+                <h2>Your editable trip plan</h2>
+              </div>
+              <div class="panel-actions">
+                <button class="ghost-button" id="regenerate-plan" type="button">
+                  Regenerate
+                </button>
+                <button class="ghost-button" id="copy-plan" type="button">
+                  Copy Plan
+                </button>
+              </div>
+            </div>
+
+            <div id="summary" class="summary-card empty-state">
+              Fill out the trip details and generate a plan to see your trip
+              summary, routing logic, hotel picks, and daily schedule.
+            </div>
+
+            <div id="itinerary" class="itinerary-list"></div>
+          </section>
         </section>
       </main>
     </div>
@@ -253,6 +384,9 @@
         </div>
 
         <div class="day-actions">
+          <a class="ghost-button day-maps-link link-button" href="#" target="_blank" rel="noreferrer">
+            Route In Maps
+          </a>
           <button class="ghost-button move-up" type="button">Move Up</button>
           <button class="ghost-button move-down" type="button">
             Move Down
@@ -264,6 +398,9 @@
       </article>
     </template>
 
+    <script>
+      window.TRIPIOR_CONFIG = window.TRIPIOR_CONFIG || {};
+    </script>
     <script src="./app.js"></script>
   </body>
 </html>
